@@ -108,7 +108,7 @@ body {
 }
 
 .square {
-    border: solid #efefef;
+    border: solid #ababab;
     display: grid;
     place-content: center;
 }
@@ -147,7 +147,7 @@ body {
 .square:nth-child(9) {
     border-bottom: none;
     border-right: none;
-}
+} 
 
 /* MAIN SECTION END */
 
