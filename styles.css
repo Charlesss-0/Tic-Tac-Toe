@@ -4,9 +4,11 @@
 :root {
     --primary-background-color: #2f2f2f;
     --primary-font-color: #2f2f2f;
+    --secondary-font-color: #efefef;
     --gameboard-background: #d8d8d8;
     --main-game-background: #1D5B79;
     --select-background: #efefef;
+    --button-color: #001C30;
 }
 
 *,
@@ -24,6 +26,7 @@ html {
 
 body {
     background-color: var(--primary-background-color);
+    color: var(--primary-font-color);
     font-family: 'Montserrat', sans-serif;
     height: 100vh;
 }
@@ -61,7 +64,7 @@ body {
     font-size: 2rem;
     text-align: center;
     display: flex;
-    gap: calc(5vw + 25px);
+    gap: calc(3vw + 25px);
     margin-top: 1em;
 
     position: absolute;
@@ -147,7 +150,49 @@ body {
 .square:nth-child(9) {
     border-bottom: none;
     border-right: none;
-} 
+}
+
+#announce-winner {
+    background-color: var(--select-background);
+    width: min(500px, 100%);
+    height: min(250px, 100%);
+
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    border-radius: 1em;
+    display: none;
+}
+
+.winner-wrapper {
+    width: 100%;
+    
+    position: absolute;
+    top: 30%; left: 50%; transform: translate(-50%, -50%);
+}
+
+.winner {
+    text-align: center;
+    font-size: 3rem;
+}
+
+.play-again-button-wrapper {
+    position: absolute;
+    bottom: 0; left: 50%; transform: translate(-50%, -50%);
+}
+
+.play-again-button {
+    background-color: var(--button-color);
+    color: var(--secondary-font-color);
+    font-family: 'Montserrat', sans-serif;
+    padding: .6em 1.4em;
+    border: none;
+    border-radius: 1rem;
+    transition: all .3s ease;
+}
+
+.play-again-button:active {
+    transform: scale(.96);
+}
 
 /* MAIN SECTION END */
 
