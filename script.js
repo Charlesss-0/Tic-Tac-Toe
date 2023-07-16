@@ -9,8 +9,6 @@ const AIScoreEl = document.querySelector('.AI-score');
 const gameTieEl = document.querySelector('.game-tie');
 const gameRoundEl = document.querySelector('.game-round');
 let isUserTurn = true;
-let userMark = '';
-let aiMark = '';
 
 const markSquare = (function() {
     let userScore = 0;
@@ -18,30 +16,10 @@ const markSquare = (function() {
     let gameTie = 0;
     let currentGameRound = 0;
 
-    selectX.addEventListener('click', () => {
-        clearSquare()
-        isUserTurn = true;
-        userMark = 'x';
-        aiMark = 'o';
-    });
-
-    selectO.addEventListener('click', () => {
-        clearSquare();
-        isUserTurn = false;
-        userMark = 'o';
-        aiMark = 'x';
-        setTimeout(aiTurn, 500); // Start with the AI's turn if the user selects 'o'
-    });
-
     squareEl.forEach(e => {
         e.addEventListener('click', () => {
-            if (isUserTurn && e.innerHTML === '') {
-                if (userMark === 'x') {
-                    e.innerHTML = `<img src="./images/x.png" width="100px">`;
-
-                } else if (userMark === 'o') {
-                    e.innerHTML = `<img src="./images/o.png" width="100px">`;
-                };
+            if (e.innerHTML === '') {
+                e.innerHTML = `<img src="./images/x.png" width="90px">`
                 isUserTurn = false;
                 setTimeout(() => {
                     aiTurn();
@@ -57,23 +35,21 @@ const markSquare = (function() {
             [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
             [0, 4, 8], [2, 4, 6] // Diagonals
         ];
-    
-        for (let condition of winningConditions) {
+
+        winningConditions.forEach(condition => {
             const [a, b, c] = condition;
             const squareA = squareEl[a].innerHTML;
             const squareB = squareEl[b].innerHTML;
             const squareC = squareEl[c].innerHTML;
-    
+
             if (squareA !== '' && squareA === squareB && squareA === squareC) {
-                if (squareA.includes(userMark)) {
-                    // getWinner('You win!');
+                if (squareA === 'x') {
                     userScore++;
                     currentGameRound++;
                     getGameScore(userScoreEl, userScore);
                     getGameScore(gameRoundEl, currentGameRound);
 
-                } else if (squareA.includes(aiMark)) {
-                    // getWinner('Computer wins!');
+                } else if (squareA === 'o') {
                     AIScore++;
                     currentGameRound++;
                     getGameScore(AIScoreEl, AIScore);
@@ -90,10 +66,9 @@ const markSquare = (function() {
 
                 return;
             };
-        }; // Iterates through the winning conditions array and prints out the winner
+        }); // Iterates through the winning conditions array and prints out the winner
     
         if ([...squareEl].every(square => square.innerHTML !== '')) {
-            getWinner(`It's a tie!`);
             gameTie++;
             currentGameRound++;
             getGameScore(gameTieEl, gameTie)
@@ -153,21 +128,18 @@ const markSquare = (function() {
 }) (); // Handles the user selection and determines the winner
 
 function aiTurn() {
-    if (!isUserTurn) {
+    // if (!isUserTurn) {
         const emptySquares = [...squareEl].filter(square => square.innerHTML === '');
 
         if (emptySquares.length > 0) {
             const randomIndex = Math.floor( Math.random() * emptySquares.length );
             const chosenSquare = emptySquares[randomIndex];
-            if (aiMark === 'x') {
-                chosenSquare.innerHTML = `<img src="./images/x.png" width="100px">`;
+            if (squareEl !== '') {
+                chosenSquare.innerHTML = `<img src="./images/o.png" width="90px">`;
 
-            } else if (aiMark === 'o') {
-                chosenSquare.innerHTML = `<img src="./images/o.png" width="100px">`;
-
-            };
+            }
             isUserTurn = true;
         };
-    };
+    // };
 }; // Handles the AI selection
 
