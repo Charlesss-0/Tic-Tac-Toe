@@ -9,12 +9,11 @@
     --main-game-background: #FAF0E4;
     --square-color: #d8d8d8;
     --select-background: #efefef;
-    --button-color: #001C30;
+    --button-color: #000000;
+    --border-color: #000000;
 }
 
-*,
-::before,
-::after {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -27,9 +26,18 @@ html {
 
 body {
     background-color: #d8d8d8;
-    background-image: url("data:image/svg+xml,%3Csvg width='42' height='44' viewBox='0 0 42 44' xmlns='http://www.w3.org/2000/svg'%3E%3Cg id='Page-1' fill='none' fill-rule='evenodd'%3E%3Cg id='brick-wall' fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M0 0h42v44H0V0zm1 1h40v20H1V1zM0 23h20v20H0V23zm22 0h20v20H22V23z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 16c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm0-2c3.314 0 6-2.686 6-6s-2.686-6-6-6-6 2.686-6 6 2.686 6 6 6zm33.414-6l5.95-5.95L45.95.636 40 6.586 34.05.636 32.636 2.05 38.586 8l-5.95 5.95 1.414 1.414L40 9.414l5.95 5.95 1.414-1.414L41.414 8zM40 48c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm0-2c3.314 0 6-2.686 6-6s-2.686-6-6-6-6 2.686-6 6 2.686 6 6 6zM9.414 40l5.95-5.95-1.414-1.414L8 38.586l-5.95-5.95L.636 34.05 6.586 40l-5.95 5.95 1.414 1.414L8 41.414l5.95 5.95 1.414-1.414L9.414 40z' fill='%23000000' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
     font-family: 'Chakra Petch', sans-serif;
     height: 100vh;
+}
+
+.show-before::before {
+    content:'';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #0005;
+    z-index: 1;
 }
 
 /* MAIN SECTION START */
@@ -43,7 +51,7 @@ body {
 
 .game-section {
     width: min(600px, 100%);
-    height: min(800px, 100%);
+    height: min(720px, 100%);
 }
 
 .gameboard-wrapper {
@@ -53,9 +61,8 @@ body {
     padding: calc(2vh + 10px) calc(2vw + 10px);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: end;
     align-items: center;
-    gap: 5em;
 
     position: relative;
 }
@@ -80,10 +87,12 @@ body {
 }
 
 .game-status {
+    background-color: var(--game-score-background);
+    border: solid var(--border-color);
     font-size: 3rem;
     text-align: center;
-    align-self: stretch;
-    margin-top: calc(15vh - 10px);
+    margin-bottom: 1em;
+    padding: 10px;
     
     animation: scaleText 1.5s linear infinite;
 }
@@ -98,31 +107,8 @@ body {
     }
 }
 
-.player-selection {
-    align-self: stretch;
-    margin-bottom: 2em;
-}
-
-.players {
-    display: flex;
-    justify-content: space-around;
-}
-
-.select {
-    background-color: var(--select-background);
-    width: 60px;
-    padding: 10px;
-    border-radius: 1rem;
-    cursor: pointer;
-    transition: all .2s ease;
-}
-
-.select:hover {
-    background-color: #e5e5e5;
-}
-
-.select:active {
-    transform: scale(.96);
+.hide {
+    display: none;
 }
 
 .main-game {
@@ -130,7 +116,8 @@ body {
     box-shadow: 8px 8px 0 #000;
     border: solid #000;
     width: calc(100% - 10px);
-    height: calc(80% - 150px);
+    height: calc(85% - 150px);
+    margin-bottom: 1.5em;
 
     padding: 10px;
     display: grid;
@@ -144,17 +131,20 @@ body {
     border: solid #000;
     display: grid;
     place-content: center;
+    cursor: pointer;
 }
 
 #announce-winner {
     background-color: var(--select-background);
-    width: min(500px, 100%);
-    height: min(250px, 100%);
+    border: solid var(--border-color);
+    box-shadow: 5px 5px 0 #000;
+    width: min(400px, 100%);
+    height: min(400px, 100%);
 
     position: absolute;
     top: 50%; left: 50%; transform: translate(-50%, -50%);
-    border-radius: 1em;
     display: none;
+    z-index: 2;
 }
 
 .winner-wrapper {
@@ -180,8 +170,8 @@ body {
     font-family: 'Montserrat', sans-serif;
     padding: .6em 1.4em;
     border: none;
-    border-radius: 1rem;
     transition: all .3s ease;
+    cursor: pointer;
 }
 
 .play-again-button:active {
@@ -193,11 +183,52 @@ body {
 /* FOOTER CONTENT SECTION START */
 
 .footer-content {
+    background-color: #ababab;
     position: absolute;
     bottom: 0; left: 50%; transform: translate(-50%, 0);
-    /* margin: 5px; */
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 5px;
     font-size: 1vh;
 }
 
+.profile-link {
+    color: #2f2f2f;
+    text-decoration: none;
+}
+
+.profile-link:hover {
+    text-decoration: underline;
+}
 
 /* FOOTER CONTENT SECTION END */
+
+/* MEDIA QUERIES SECTION START */
+
+@media (max-width: 800px) {
+    html {
+        font-size: 50.5%;
+    }
+
+    .main-game {
+        width: calc(100% - 10px);
+        height: calc(80% - 200px);    
+    }
+
+    .footer-content {
+        width: max-content;
+    }
+
+    .cross-image,
+    .circle-image {
+        width: 50px;
+    }
+}
+
+@media (max-width: 400px) {
+    html {
+        font-size: 40.5%;
+    }
+}
+
+/* MEDIA QUERIES SECTION END */
