@@ -5,147 +5,154 @@ const game = (function() {
     const playAgainBtn = document.querySelector('.play-again-button');
     const gameStatusEl = document.querySelector('.game-status');
     const userScoreEl = document.querySelector('.user-score');
-    const AIScoreEl = document.querySelector('.AI-score');
+    const aiScoreEl = document.querySelector('.AI-score');
     const gameTieEl = document.querySelector('.game-tie');
     const gameRoundEl = document.querySelector('.game-round');
 
-    let isUserTurn = true;
-    let userMark = 'x'
-    let aiMark = 'o'
-    let userScore = 0;
-    let AIScore = 0;
-    let gameTie = 0;
-    let currentGameRound = 0;
+    const winningConditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+        [0, 4, 8], [2, 4, 6] // Diagonals
+    ];
 
-    document.querySelector('.board').addEventListener('click', (event) => {
+    const state = {
+        isUserTurn: true,
+        userMark: 'x',
+        aiMark: 'o',
+        userScore: 0,
+        aiScore: 0,
+        gameTie: 0,
+        currentGameRound: 0
+    };
+
+    document.querySelector('.board').addEventListener('click', handleSquareClick);
+
+    function handleSquareClick(event) {
         const square = event.target.closest('.square');
-        if (square && square.innerHTML === '' && isUserTurn === true) {
-            userMark = 'x'
-            gameStatusEl.style.display = 'none';
-            square.innerHTML = `<img src="./images/x.png" width="90px" class="cross-image">`;
-            isUserTurn = false;
+        if (square && square.innerHTML === '' && state.isUserTurn) {
+            makeUserMove(square);
             setTimeout(() => {
                 aiTurn();
                 checkWinner();
             }, 500);
         };
-    });
+    };
+
+    function makeUserMove(square) {
+        if (state.userMark === 'x') {
+            gameStatusEl.style.display = 'none';
+            const img = document.createElement('img');
+            img.src = `./images/${state.userMark}.png`;
+            img.width = '90px';
+            img.classList.add('cross-image', 'cross');
+            square.textContent = '';
+            square.appendChild(img)
+            state.isUserTurn === false;
+        }
+    };
+
+    function aiTurn() {
+        if (!state.isUserTurn) {
+            const boardEl = document.querySelector('board');
+            const emptySquares = [...boardEl.children].filter(square => square.innerHTML === '');
+    
+            if (emptySquares.length > 0) {
+                    const randomIndex = Math.floor( Math.random() * emptySquares.length );
+                    const chosenSquare = emptySquares[randomIndex];
+                    if (state.aiMark === 'o') {
+                        const img = document.createElement('img');
+                        img.src = `./images/${state.aiMark}.png`;
+                        img.width = '90px';
+                        img.classList.add('circle-image', 'circle');
+                        chosenSquare.textContent = '';
+                        chosenSquare.appendChild(img);
+                        state.isUserTurn = true;    
+                    };
+            };
+
+        };
+    };
 
     function checkWinner() { // Checks who the winner is and prints out the result
-        const winningConditions = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-            [0, 4, 8], [2, 4, 6] // Diagonals
-        ];
-
         for (let condition of winningConditions) {
             const [a, b, c] = condition;
             const squareA = squareEl[a].innerHTML;
             const squareB = squareEl[b].innerHTML;
             const squareC = squareEl[c].innerHTML;
 
-            if (squareA !== '' && squareA === squareB && squareA === squareC) {
-                if (squareA.includes(userMark)) {
-                    userScore++;
-                    currentGameRound++;
+            if (squareA === squareB && squareB === squareC && squareA !== '') {
+                if (squareA.includes(state.userMark)) {
+                    state.userScore++;
+                    state.currentGameRound++;
                     showRoundResult('You win!');
-                    getGameScore(userScoreEl, userScore);
-                    getGameScore(gameRoundEl, currentGameRound);
+                    updateScore(userScoreEl, state.userScore);
+                    updateScore(gameRoundEl, state.currentGameRound);
 
-                } else if (squareA.includes(aiMark)) {
-                    AIScore++;
-                    currentGameRound++;
+                } else if (squareA.includes(state.aiMark)) {
+                    state.aiScore++;
+                    state.currentGameRound++;
                     showRoundResult('Computer wins!');
-                    getGameScore(AIScoreEl, AIScore);
-                    getGameScore(gameRoundEl, currentGameRound);
+                    updateScore(aiScoreEl, state.aiScore);
+                    updateScore(gameRoundEl, state.currentGameRound);
                 };
                 resetGame();
 
-                if (userScore === 3 || AIScore === 3) {
+                if (state.userScore === 3 || state.aiScore === 3) {
                     setTimeout(() => {
                         announceFinalResult();
                     }, 500);
                 };
-
+                return;
             };
         };
 
         if ([...squareEl].every(square => square.innerHTML !== '')) {
-            gameTie++;
-            currentGameRound++;
+            state.gameTie++;
+            state.currentGameRound++;
             showRoundResult(`It's a tie!`)
-            getGameScore(gameTieEl, gameTie)
-            getGameScore(gameRoundEl, currentGameRound);
+            updateScore(gameTieEl, state.gameTie)
+            updateScore(gameRoundEl, state.currentGameRound);
             resetGame();
-        };    
-
-        function showRoundResult(el) {
-            gameStatusEl.style.display = 'block';
-            gameStatusEl.innerHTML = `
-                <h2>
-                    ${el}
-                </h2>
-            `;
         };
+    };
 
-        function getGameScore(va, el) {
-            va.innerHTML = `
-                <span>
-                    ${el}
-                </span>
-            `;
+    function showRoundResult(message) {
+        gameStatusEl.style.display = 'block';
+        gameStatusEl.innerHTML = `<h2>${message}</h2>`;
+    };
+
+    function updateScore(element, score) {
+        element.innerHTML = `<span>${score}</span>`;
+    };
+
+    function announceFinalResult() {
+        if (state.userScore > state.aiScore) {
+            document.body.classList.add('show-before');
+            getWinner('You won the game!');
+
+        } else if (state.aiScore > state.userScore) {
+            document.body.classList.add('show-before');
+            getWinner('Computer won the game!');
         };
-
-        function announceFinalResult() {
-            if (userScore > AIScore) {
-                document.body.classList.add('show-before');
-                getWinner('You won the game!');
-
-            } else if (AIScore > userScore) {
-                document.body.classList.add('show-before');
-                getWinner('Computer won the game!');
-            };
-        };
-
     };
 
     function getWinner(winner) {
         announceWinnerEl.style.display = 'block';
         const winEl = document.createElement('div');
-        winEl.innerHTML = `
-                <h2 class="winner">
-                    ${winner}
-                </h2>
-        `;
+        winEl.innerHTML = `<h2 class="winner">${winner}</h2>`;
         winnerWrapperEl.appendChild(winEl);
-    }; // Lets the user know who won
-
-    function playAgain() {
-        announceWinnerEl.style.display = 'none';
-        location.reload();
     };
-    playAgainBtn.addEventListener('click', playAgain);
 
     function resetGame() {
         squareEl.forEach(e => {
             e.innerHTML = '';
-        })
-        isUserTurn = true;
+        });
     };
 
-    function aiTurn() {
-        if (!isUserTurn) {
-            const emptySquares = [...squareEl].filter(square => square.innerHTML === '');
-    
-            if (emptySquares.length > 0) {
-                const randomIndex = Math.floor( Math.random() * emptySquares.length );
-                const chosenSquare = emptySquares[randomIndex];
-                aiMark = 'o';
-                chosenSquare.innerHTML = `<img src="./images/o.png" width="90px" class="circle-image">`;
-                isUserTurn = true;
-            };
-        };
-    }; // Handles the AI selection
+    function playAgain() {
+        location.reload();
+    };
+    playAgainBtn.addEventListener('click', playAgain);
 
 }) (); // Handles the game logic, determines the winner and increments the scores
 
