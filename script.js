@@ -70,14 +70,14 @@ const game = (function() {
                 if (squareA.includes('cross') && squareB.includes('cross')) {
                     state.userScore++;
                     state.currentGameRound++;
-                    showRoundResult('You win!');
+                    showRoundResult('You win the round!');
                     updateScore(userScoreEl, state.userScore);
                     updateScore(gameRoundEl, state.currentGameRound);
 
                 } else if (squareA.includes('circle') && squareB.includes('circle')) {
                     state.aiScore++;
                     state.currentGameRound++;
-                    showRoundResult('Computer Wins!');
+                    showRoundResult('Computer wins the round!');
                     updateScore(aiScoreEl, state.aiScore);
                     updateScore(gameRoundEl, state.currentGameRound);
                 }
