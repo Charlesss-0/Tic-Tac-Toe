@@ -35,7 +35,7 @@ const game = (function() {
                 setTimeout(() => {
                     aiTurn();
                     checkWinner();
-                }, 500);    
+                }, 1000);    
             };
         };
     };
@@ -59,15 +59,12 @@ const game = (function() {
 
     function checkWinner() { // Checks who the winner is and prints out the result
         const board = [...squareEl].map(square => square.innerHTML);
-        // console.log({ board })
     
         for (let condition of winningConditions) {
             const [a, b, c] = condition;
             const squareA = board[a];
             const squareB = board[b];
             const squareC = board[c];
-
-            console.log({squareA})
 
             if (squareA !== '' && squareA === squareB && squareB === squareC) {
                 if (squareA.includes('cross') && squareB.includes('cross')) {
